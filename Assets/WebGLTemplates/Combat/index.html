@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07141a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2307141a'/%3E%3Cpath d='M32 8L36 29L55 43L36 39L36 52L43 57L32 54L21 57L28 52L28 39L9 43L28 29Z' fill='%23ffb84d'/%3E%3C/svg%3E">
+  <meta name="description" content="Fight against Israel — a top-down 3D Unity fighter game. Fly a MiG-29-inspired aircraft above a scrolling coastline.">
+  <title>Fight against Israel</title>
+  <style>
+    *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#07141a;color:#edf5f2;font-family:Arial,sans-serif}
+    #unity-canvas{display:block;width:100%;height:100%;outline:none;touch-action:none;background:#09252d}
+    #loading{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(ellipse at 70% 35%,#103640,#07141a 65%);z-index:2}
+    .brief{width:min(460px,86vw)}.eyebrow{color:#4ad0c6;font-size:12px;letter-spacing:3px;margin:0 0 24px}
+    h1{font-size:clamp(32px,6vw,49px);line-height:1.02;letter-spacing:-1px;margin:0 0 26px;font-weight:800}.bar{height:3px;background:#203941;overflow:hidden}
+    #progress{height:100%;width:0;background:#ffb84d;transition:width .15s}#status{font-size:13px;color:#94b1b4;line-height:1.6;margin-top:18px}
+    #fullscreen{position:fixed;top:25px;right:25px;background:rgba(8,23,29,.85);color:#bcd2d0;border:1px solid #335458;border-radius:3px;font-size:12px;padding:9px 12px;z-index:1;cursor:pointer}
+    #error{display:none;color:#ffc581;white-space:pre-wrap;font-size:14px;line-height:1.5;margin-top:20px}
+    @media(max-width:760px){#fullscreen{top:auto;bottom:8px;right:8px;padding:6px;font-size:10px}}
+  </style>
+</head>
+<body>
+  <canvas id="unity-canvas" width="{{{ WIDTH }}}" height="{{{ HEIGHT }}}" tabindex="0" aria-label="Fight against Israel game"></canvas>
+  <div id="loading"><div class="brief"><p class="eyebrow">3D AIR COMBAT / UNITY</p><h1>FIGHT AGAINST<br>ISRAEL</h1><div class="bar"><div id="progress"></div></div><p id="status">Preparing your aircraft…</p><p id="error" role="alert"></p></div></div>
+  <button id="fullscreen" type="button" aria-label="Enter fullscreen">⛶</button>
+  <script>
+    const canvas = document.getElementById('unity-canvas');
+    const loading = document.getElementById('loading');
+    const config = {
+      arguments: [],
+      dataUrl: 'Build/{{{ DATA_FILENAME }}}',
+      frameworkUrl: 'Build/{{{ FRAMEWORK_FILENAME }}}',
+      codeUrl: 'Build/{{{ CODE_FILENAME }}}',
+      streamingAssetsUrl: 'StreamingAssets',
+      companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+      productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+      productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+      devicePixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
+      autoSyncPersistentDataPath: true,
+      showBanner(message, type) { if (type === 'error') showError(message); else console.warn(message); }
+    };
+    function showError(message) {
+      loading.style.display = 'grid';
+      document.getElementById('status').textContent = 'The game could not start.';
+      const error = document.getElementById('error');
+      error.style.display = 'block';
+      error.textContent = String(message);
+    }
+    const script = document.createElement('script');
+    script.src = 'Build/{{{ LOADER_FILENAME }}}';
+    script.onerror = () => showError('Please check your connection and reload the page.');
+    script.onload = () => createUnityInstance(canvas, config, progress => {
+      document.getElementById('progress').style.width = `${Math.round(progress * 100)}%`;
+      document.getElementById('status').textContent = `Preparing your aircraft… ${Math.round(progress * 100)}%`;
+    }).then(instance => {
+      window.unityInstance = instance;
+      loading.style.display = 'none';
+      canvas.focus();
+      document.getElementById('fullscreen').onclick = () => { instance.SetFullscreen(1); canvas.focus(); };
+    }).catch(showError);
+    document.body.appendChild(script);
+  </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+# Unity generated data and local build outputs
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Bb]uilds/
+/[Bb]uild/
+/[Aa]rtifacts/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+/.vs/
+/.idea/
+/.vscode/
+
+# IDE and operating system files
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local logs, test output, Python cache, and credentials
+/*.log
+/TestResults/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.pfx
+*.p12
+
+# Keep the browser build in docs/ for GitHub Pages.
+# Keep all Unity .meta files alongside their source assets.
